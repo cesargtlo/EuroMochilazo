@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎒 Mi Aventura Europea - Mapa de Donaciones</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
+            40%, 43% { transform: translateY(-10px); }
+            70% { transform: translateY(-5px); }
+        }
+        .unlocked { animation: bounce 1s ease-in-out; }
+        .current { animation: pulse 2s infinite; }
+        .path-line {
+            stroke-dasharray: 10, 5;
+            animation: dash 2s linear infinite;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: -15; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 min-h-screen text-white">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                🎒 MI AVENTURA EUROPEA
+            </h1>
+            <p class="text-xl text-blue-200 mb-6">¡Ayúdame a desbloquear cada destino con tu donación!</p>
+            
+            <!-- Progress Bar -->
+            <div class="max-w-2xl mx-auto bg-gray-800 rounded-full h-6 mb-4">
+                <div id="progressBar" class="bg-gradient-to-r from-green-400 to-blue-500 h-6 rounded-full transition-all duration-1000" style="width: 14.3%"></div>
+            </div>
+            <p class="text-lg">
+                <span id="currentAmount" class="text-green-400 font-bold">$2,500</span> / 
+                <span class="text-yellow-400 font-bold">$15,000</span> recaudados
+            </p>
+        </div>
+
+        <!-- Map Container -->
+        <div class="relative max-w-6xl mx-auto bg-gray-800/50 rounded-3xl p-8 backdrop-blur-sm border border-gray-700">
+            <!-- SVG Map -->
+            <svg viewBox="0 0 800 500" class="w-full h-auto">
+                <!-- Background -->
+                <rect width="800" height="500" fill="url(#mapGradient)"/>
+                
+                <!-- Gradient Definition -->
+                <defs>
+                    <linearGradient id="mapGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:0.3"/>
+                        <stop offset="100%" style="stop-color:#312e81;stop-opacity:0.3"/>
+                    </linearGradient>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <!-- Path Lines -->
+                <path d="M 100 400 Q 200 350 300 300" stroke="#4ade80" stroke-width="3" fill="none" class="path-line" opacity="0.8"/>
+                <path d="M 300 300 Q 400 250 500 200" stroke="#22d3ee" stroke-width="3" fill="none" class="path-line" opacity="0.6"/>
+                <path d="M 500 200 Q 600 150 700 100" stroke="#a855f7" stroke-width="3" fill="none" class="path-line" opacity="0.4"/>
+
+                <!-- Destination Points -->
+                <!-- Madrid (Unlocked) -->
+                <circle cx="100" cy="400" r="35" fill="#10b981" filter="url(#glow)" class="unlocked"/>
+                <g transform="translate(100,400)">
+                    <!-- Oso y Madroño (Madrid symbol) -->
+                    <ellipse cx="0" cy="5" rx="8" ry="10" fill="#8b4513"/>
+                    <circle cx="0" cy="-2" r="6" fill="#8b4513"/>
+                    <circle cx="-3" cy="-5" r="1.5" fill="#000"/>
+                    <circle cx="3" cy="-5" r="1.5" fill="#000"/>
+                    <ellipse cx="0" cy="-1" rx="1" ry="2" fill="#000"/>
+                    <!-- Madroño tree -->
+                    <rect x="8" y="-5" width="2" height="15" fill="#654321"/>
+                    <circle cx="9" cy="-8" r="4" fill="#228b22"/>
+                    <circle cx="7" cy="-10" r="1" fill="#dc143c"/>
+                    <circle cx="11" cy="-9" r="1" fill="#dc143c"/>
+                    <circle cx="9" cy="-6" r="1" fill="#dc143c"/>
+                </g>
+                <text x="100" y="450" text-anchor="middle" fill="white" font-size="14" font-weight="bold">🇪🇸 MADRID</text>
+                <text x="100" y="465" text-anchor="middle" fill="#10b981" font-size="12">¡DESBLOQUEADO!</text>
+
+                <!-- Barcelona (Current) -->
+                <circle cx="200" cy="350" r="35" fill="#f59e0b" filter="url(#glow)" class="current"/>
+                <g transform="translate(200,350)">
+                    <!-- Sagrada Familia -->
+                    <rect x="-12" y="-5" width="24" height="20" fill="#d4af37"/>
+                    <!-- Central towers -->
+                    <rect x="-3" y="-15" width="6" height="10" fill="#daa520"/>
+                    <polygon points="0,-15 -4,-20 4,-20" fill="#b8860b"/>
+                    <!-- Side towers -->
+                    <rect x="-10" y="-12" width="4" height="7" fill="#daa520"/>
+                    <rect x="6" y="-12" width="4" height="7" fill="#daa520"/>
+                    <polygon points="-8,-12 -10,-16 -6,-16" fill="#b8860b"/>
+                    <polygon points="8,-12 6,-16 10,-16" fill="#b8860b"/>
+                    <!-- Details -->
+                    <circle cx="0" cy="-8" r="2" fill="#8b4513"/>
+                    <rect x="-1" y="5" width="2" height="10" fill="#654321"/>
+                </g>
+                <text x="200" y="400" text-anchor="middle" fill="white" font-size="14" font-weight="bold">🇪🇸 BARCELONA</text>
+                <text x="200" y="415" text-anchor="middle" fill="#f59e0b" font-size="12">$2,500 - ACTUAL</text>
+
+                <!-- París (Locked) -->
+                <circle cx="300" cy="300" r="30" fill="#6b7280" opacity="0.6"/>
+                <g transform="translate(300,300)" opacity="0.4">
+                    <!-- Eiffel Tower silhouette -->
+                    <polygon points="0,-15 -8,10 -3,10 -1,5 1,5 3,10 8,10" fill="#4b5563"/>
+                    <rect x="-1" y="-5" width="2" height="3" fill="#4b5563"/>
+                    <rect x="-6" y="0" width="12" height="1" fill="#4b5563"/>
+                    <text x="0" y="0" text-anchor="middle" fill="#9ca3af" font-size="16">🔒</text>
+                </g>
+                <text x="300" y="350" text-anchor="middle" fill="#9ca3af" font-size="14">🇫🇷 PARÍS</text>
+                <text x="300" y="365" text-anchor="middle" fill="#6b7280" font-size="12">$5,000</text>
+
+                <!-- Amsterdam (Locked) -->
+                <circle cx="400" cy="250" r="30" fill="#6b7280" opacity="0.6"/>
+                <g transform="translate(400,250)" opacity="0.4">
+                    <!-- Amsterdam canal houses silhouette -->
+                    <rect x="-10" y="-5" width="6" height="15" fill="#4b5563"/>
+                    <rect x="-2" y="-8" width="6" height="18" fill="#4b5563"/>
+                    <rect x="6" y="-3" width="6" height="13" fill="#4b5563"/>
+                    <polygon points="-10,-5 -7,-10 -4,-5" fill="#4b5563"/>
+                    <polygon points="-2,-8 1,-12 4,-8" fill="#4b5563"/>
+                    <polygon points="6,-3 9,-7 12,-3" fill="#4b5563"/>
+                    <text x="0" y="0" text-anchor="middle" fill="#9ca3af" font-size="16">🔒</text>
+                </g>
+                <text x="400" y="300" text-anchor="middle" fill="#9ca3af" font-size="14">🇳🇱 AMSTERDAM</text>
+                <text x="400" y="315" text-anchor="middle" fill="#6b7280" font-size="12">$7,500</text>
+
+                <!-- Berlín (Locked) -->
+                <circle cx="500" cy="200" r="30" fill="#6b7280" opacity="0.6"/>
+                <g transform="translate(500,200)" opacity="0.4">
+                    <!-- Brandenburg Gate silhouette -->
+                    <rect x="-12" y="-5" width="24" height="15" fill="#4b5563"/>
+                    <rect x="-10" y="-5" width="2" height="15" fill="#4b5563"/>
+                    <rect x="-4" y="-5" width="2" height="15" fill="#4b5563"/>
+                    <rect x="2" y="-5" width="2" height="15" fill="#4b5563"/>
+                    <rect x="8" y="-5" width="2" height="15" fill="#4b5563"/>
+                    <rect x="-12" y="-8" width="24" height="3" fill="#4b5563"/>
+                    <text x="0" y="0" text-anchor="middle" fill="#9ca3af" font-size="16">🔒</text>
+                </g>
+                <text x="500" y="250" text-anchor="middle" fill="#9ca3af" font-size="14">🇩🇪 BERLÍN</text>
+                <text x="500" y="265" text-anchor="middle" fill="#6b7280" font-size="12">$10,000</text>
+
+                <!-- Praga (Locked) -->
+                <circle cx="600" cy="150" r="30" fill="#6b7280" opacity="0.6"/>
+                <g transform="translate(600,150)" opacity="0.4">
+                    <!-- Prague Castle silhouette -->
+                    <rect x="-12" y="-2" width="24" height="12" fill="#4b5563"/>
+                    <rect x="-8" y="-8" width="4" height="6" fill="#4b5563"/>
+                    <rect x="0" y="-10" width="4" height="8" fill="#4b5563"/>
+                    <rect x="8" y="-6" width="4" height="4" fill="#4b5563"/>
+                    <polygon points="-6,-8 -6,-12 -2,-12" fill="#4b5563"/>
+                    <polygon points="2,-10 2,-14 6,-14" fill="#4b5563"/>
+                    <polygon points="10,-6 10,-10 14,-10" fill="#4b5563"/>
+                    <text x="0" y="0" text-anchor="middle" fill="#9ca3af" font-size="16">🔒</text>
+                </g>
+                <text x="600" y="200" text-anchor="middle" fill="#9ca3af" font-size="14">🇨🇿 PRAGA</text>
+                <text x="600" y="215" text-anchor="middle" fill="#6b7280" font-size="12">$12,500</text>
+
+                <!-- Roma (Final) -->
+                <circle cx="700" cy="100" r="30" fill="#6b7280" opacity="0.6"/>
+                <g transform="translate(700,100)" opacity="0.4">
+                    <!-- Colosseum silhouette -->
+                    <ellipse cx="0" cy="5" rx="12" ry="8" fill="#4b5563"/>
+                    <ellipse cx="0" cy="5" rx="8" ry="5" fill="none" stroke="#374151" stroke-width="1"/>
+                    <rect x="-12" y="-3" width="24" height="8" fill="#4b5563"/>
+                    <rect x="-10" y="-6" width="2" height="3" fill="#4b5563"/>
+                    <rect x="-4" y="-6" width="2" height="3" fill="#4b5563"/>
+                    <rect x="2" y="-6" width="2" height="3" fill="#4b5563"/>
+                    <rect x="8" y="-6" width="2" height="3" fill="#4b5563"/>
+                    <text x="0" y="0" text-anchor="middle" fill="#9ca3af" font-size="16">🔒</text>
+                </g>
+                <text x="700" y="150" text-anchor="middle" fill="#9ca3af" font-size="14">🇮🇹 ROMA</text>
+                <text x="700" y="165" text-anchor="middle" fill="#6b7280" font-size="12">$15,000 - META</text>
+            </svg>
+        </div>
+
+        <!-- Donation Section -->
+        <div class="max-w-2xl mx-auto mt-12 bg-gradient-to-r from-purple-800/50 to-blue-800/50 rounded-2xl p-8 backdrop-blur-sm border border-purple-500/30">
+            <h2 class="text-3xl font-bold text-center mb-6 text-yellow-400">💰 ¡Ayúdame a Continuar!</h2>
+            
+            <div class="grid grid-cols-3 md:grid-cols-5 gap-3 mb-8">
+                <button onclick="selectAmount(1)" class="donation-btn bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105">
+                    $1
+                </button>
+                <button onclick="selectAmount(5)" class="donation-btn bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105">
+                    $5
+                </button>
+                <button onclick="selectAmount(10)" class="donation-btn bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105">
+                    $10
+                </button>
+                <button onclick="selectAmount(20)" class="donation-btn bg-pink-600 hover:bg-pink-500 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105">
+                    $20
+                </button>
+                <button onclick="selectAmount(50)" class="donation-btn bg-orange-600 hover:bg-orange-500 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105">
+                    $50
+                </button>
+            </div>
+
+            <div class="mb-6">
+                <input type="number" id="customAmount" placeholder="O ingresa otra cantidad en pesos" 
+                       class="w-full p-4 rounded-xl bg-gray-800 border border-gray-600 text-white text-lg focus:border-yellow-400 focus:outline-none">
+            </div>
+
+            <button onclick="makeDonation()" 
+                    class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
+                🚀 ¡DONAR AHORA!
+            </button>
+
+            <p class="text-center text-sm text-gray-300 mt-4">
+                * Esta es una página demo. En la versión real se integraría con PayPal, Stripe u otro procesador de pagos.
+            </p>
+        </div>
+
+        <!-- Travel Phrases Section -->
+        <div class="max-w-4xl mx-auto mt-12 bg-gray-800/30 rounded-2xl p-8 backdrop-blur-sm">
+            <h3 class="text-2xl font-bold mb-6 text-center text-blue-300">✈️ Mi Aventura Paso a Paso</h3>
+            <div id="travelPhrases" class="space-y-4">
+                <!-- Phrases will be populated here based on unlocked destinations -->
+            </div>
+        </div>
+
+        <!-- Social Media Section -->
+        <div class="max-w-2xl mx-auto mt-12 bg-gradient-to-r from-pink-800/30 to-purple-800/30 rounded-2xl p-8 backdrop-blur-sm border border-pink-500/30">
+            <h3 class="text-2xl font-bold mb-6 text-center text-pink-300">📱 Sígueme en el Viaje</h3>
+            <p class="text-center text-gray-300 mb-6">¡Documenta conmigo cada paso de esta aventura!</p>
+            
+            <div class="flex justify-center space-x-6">
+                <!-- Instagram -->
+                <a href="https://instagram.com/cesar.g.5.7" target="_blank" 
+                   class="group flex flex-col items-center p-4 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl hover:from-purple-500 hover:to-pink-500 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <div class="w-12 h-12 mb-2 flex items-center justify-center">
+                        <!-- Instagram Icon -->
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                    </div>
+                    <span class="text-white font-bold text-sm">@cesar.g.5.7</span>
+                    <span class="text-pink-200 text-xs mt-1">Fotos del viaje</span>
+                </a>
+
+                <!-- TikTok -->
+                <a href="https://tiktok.com/@cesargtlo" target="_blank" 
+                   class="group flex flex-col items-center p-4 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <div class="w-12 h-12 mb-2 flex items-center justify-center">
+                        <!-- TikTok Icon -->
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                        </svg>
+                    </div>
+                    <span class="text-white font-bold text-sm">@cesargtlo</span>
+                    <span class="text-gray-300 text-xs mt-1">Videos cortos</span>
+                </a>
+            </div>
+
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-400 mb-2">¡Etiquétame cuando compartas mi aventura!</p>
+                <div class="flex justify-center space-x-4 text-xs text-gray-500">
+                    <span>#MiAventuraEuropea</span>
+                    <span>#MochileroSoñador</span>
+                    <span>#ViajarConLoMinimo</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Story Section -->
+        <div class="max-w-4xl mx-auto mt-8 bg-gray-800/30 rounded-2xl p-8 backdrop-blur-sm">
+            <h3 class="text-2xl font-bold mb-4 text-center text-blue-300">📖 Mi Historia</h3>
+            <div class="text-lg text-gray-300 leading-relaxed space-y-4">
+                <p class="text-center font-semibold text-xl text-yellow-400">
+                    Soy un mochilero y estoy intentando llegar a Europa paso por paso… literalmente.
+                </p>
+                <p class="text-center">
+                    Cada peso que me dan desbloquea una frase, una historia o una emoción.
+                </p>
+                <p class="text-center">
+                    Si quieres ver hasta dónde puede llegar un sueño con lo mínimo, te invito a ser parte del camino.
+                </p>
+                <div class="bg-blue-900/30 p-6 rounded-xl border border-blue-500/30 mt-6">
+                    <h4 class="text-blue-300 font-bold mb-3 text-center">🎥 Mi Misión</h4>
+                    <p class="text-center mb-3">
+                        Planeo estar <span class="text-yellow-400 font-bold">20 días</span> recorriendo Europa con mi mochila, 
+                        documentando cada momento para YouTube
+                    </p>
+                    <p class="text-center mb-3 text-blue-200">
+                        Pero esto va más allá de un simple viaje...
+                    </p>
+                    <p class="text-center mb-2 font-semibold text-yellow-300">
+                        Quiero demostrar que los sueños no necesitan presupuestos millonarios
+                    </p>
+                    <p class="text-center text-sm text-gray-300">
+                        Mi objetivo es inspirar a otros a dar ese primer paso, a salir de su zona de confort 
+                        y perseguir sus propias aventuras. Si yo puedo hacerlo con lo mínimo, 
+                        <span class="text-yellow-400 font-bold">tú también puedes</span>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTotal = 2500;
+        const destinations = [
+            { 
+                name: 'Madrid', 
+                goal: 0, 
+                unlocked: true,
+                phrase: "🇪🇸 Madrid... sueño con caminar por el Retiro al amanecer, con mi mochila como única compañía. El primer paso de una aventura que apenas comienza."
+            },
+            { 
+                name: 'Barcelona', 
+                goal: 2500, 
+                unlocked: true,
+                phrase: "🏖️ Barcelona me llama con sus calles bohemias y la Sagrada Familia. Quiero perderme en sus rincones y encontrar historias que contar."
+            },
+            { 
+                name: 'París', 
+                goal: 5000, 
+                unlocked: false,
+                phrase: "🗼 París... la ciudad de los sueños imposibles. Quiero sentarme junto al Sena y entender por qué tantos soñadores vinieron aquí a buscar su destino."
+            },
+            { 
+                name: 'Amsterdam', 
+                goal: 7500, 
+                unlocked: false,
+                phrase: "🚲 Amsterdam y sus canales infinitos. Sueño con pedalear entre puentes centenarios, respirando la libertad que solo un mochilero puede entender."
+            },
+            { 
+                name: 'Berlín', 
+                goal: 10000, 
+                unlocked: false,
+                phrase: "🏛️ Berlín, donde la historia se respira en cada esquina. Quiero tocar los restos del muro y sentir el peso de los sueños que se hicieron realidad."
+            },
+            { 
+                name: 'Praga', 
+                goal: 12500, 
+                unlocked: false,
+                phrase: "🏰 Praga, la ciudad dorada que parece salida de un cuento. Sueño con caminar por sus calles empedradas y sentirme parte de su magia medieval."
+            },
+            { 
+                name: 'Roma', 
+                goal: 15000, 
+                unlocked: false,
+                phrase: "🏛️ Roma... el gran final. Entre ruinas milenarias cerraré este capítulo épico. Gracias por creer que un sueño con lo mínimo puede llegar tan lejos."
+            }
+        ];
+
+        function selectAmount(amount) {
+            const customInput = document.getElementById('customAmount');
+            if (amount === 0) {
+                customInput.focus();
+            } else {
+                customInput.value = amount;
+            }
+            
+            // Visual feedback
+            document.querySelectorAll('.donation-btn').forEach(btn => {
+                btn.classList.remove('ring-4', 'ring-yellow-400');
+            });
+            event.target.classList.add('ring-4', 'ring-yellow-400');
+        }
+
+        function makeDonation() {
+            const amount = parseInt(document.getElementById('customAmount').value);
+            
+            if (!amount || amount <= 0) {
+                alert('Por favor ingresa una cantidad válida');
+                return;
+            }
+
+            // Simulate donation
+            currentTotal += amount;
+            updateProgress();
+            
+            // Show success message
+            alert(`¡Gracias por tu donación de $${amount}! 🎉\n\nTotal recaudado: $${currentTotal}\n\n¡Cada peso me acerca más a mi aventura europea!`);
+            
+            // Clear input
+            document.getElementById('customAmount').value = '';
+            document.querySelectorAll('.donation-btn').forEach(btn => {
+                btn.classList.remove('ring-4', 'ring-yellow-400');
+            });
+        }
+
+        function updateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const currentAmountSpan = document.getElementById('currentAmount');
+            
+            const percentage = Math.min((currentTotal / 15000) * 100, 100);
+            progressBar.style.width = percentage + '%';
+            currentAmountSpan.textContent = '$' + currentTotal;
+
+            // Check for unlocked destinations
+            destinations.forEach((dest, index) => {
+                if (currentTotal >= dest.goal && !dest.unlocked) {
+                    dest.unlocked = true;
+                    showUnlockAnimation(dest.name, dest.phrase);
+                }
+            });
+
+            // Update phrases display
+            updatePhrasesDisplay();
+        }
+
+        function updatePhrasesDisplay() {
+            const phrasesContainer = document.getElementById('travelPhrases');
+            phrasesContainer.innerHTML = '';
+
+            destinations.forEach((dest, index) => {
+                if (dest.unlocked) {
+                    const phraseDiv = document.createElement('div');
+                    phraseDiv.className = 'bg-gradient-to-r from-green-600/20 to-blue-600/20 p-4 rounded-xl border border-green-500/30';
+                    phraseDiv.innerHTML = `
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                ${index + 1}
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-green-400 mb-1">${dest.name}</h4>
+                                <p class="text-gray-300">${dest.phrase}</p>
+                            </div>
+                        </div>
+                    `;
+                    phrasesContainer.appendChild(phraseDiv);
+                }
+            });
+
+            if (phrasesContainer.children.length === 0) {
+                phrasesContainer.innerHTML = '<p class="text-gray-400 text-center italic">Las frases de tu aventura aparecerán aquí conforme desbloquees destinos...</p>';
+            }
+        }
+
+        function showUnlockAnimation(destName, phrase) {
+            // Create celebration effect
+            const celebration = document.createElement('div');
+            celebration.innerHTML = `
+                <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm p-4">
+                    <div class="bg-gradient-to-r from-yellow-400 to-orange-500 p-8 rounded-2xl text-center transform animate-bounce max-w-lg">
+                        <h2 class="text-4xl font-bold text-white mb-4">🎉 ¡DESTINO DESBLOQUEADO!</h2>
+                        <p class="text-2xl text-white font-bold mb-4">${destName}</p>
+                        <div class="bg-white/20 p-4 rounded-xl mb-4">
+                            <p class="text-white text-lg italic">"${phrase}"</p>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" 
+                                class="bg-white text-orange-500 px-6 py-2 rounded-full font-bold hover:bg-gray-100 transition-colors">
+                            ¡Genial!
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(celebration);
+            
+            // Auto remove after 8 seconds
+            setTimeout(() => {
+                if (celebration.parentElement) {
+                    celebration.remove();
+                }
+            }, 8000);
+        }
+
+        // Allow Enter key to donate
+        document.getElementById('customAmount').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                makeDonation();
+            }
+        });
+
+        // Initialize phrases display on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePhrasesDisplay();
+        });
+    </script>
+</body>
+</html>
